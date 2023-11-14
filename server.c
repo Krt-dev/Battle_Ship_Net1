@@ -75,12 +75,24 @@ int is_hit(char board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
 }
 
 int main() {
+    WSADATA wsaData;
+    if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
+        perror("Failed to initialize Winsock");
+        return EXIT_FAILURE;
+    }
+
     int server_socket;
-    int client_socket;
+    int client_sockets[2];
     struct sockaddr_in server_addr, client_addr;
-    socklen_t addr_size;
+    int addr_size;
     char buffer[MAX_MESSAGE_SIZE] = {0};
-    char game_board[BOARD_SIZE][BOARD_SIZE];
+    char game_board[2][BOARD_SIZE][BOARD_SIZE]; // Separate boards for each player
+
+    // Initialize the game boards and place ships for both players
+    initialize_board(game_board[0]);
+    initialize_board(game_board[1]);
+    place_ships(game_board[0]);
+    place_ships(game_board[1]);
 
     // Create socket
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -99,89 +111,75 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    // Listen for incoming connections
-    if (listen(server_socket, 1) == -1) {
+    // Listen for incoming connections (two players)
+    if (listen(server_socket, 2) == -1) {
         perror("Listen failed");
         exit(EXIT_FAILURE);
     }
 
-    printf("Waiting for a connection...\n");
+    printf("Waiting for players to connect...\n");
 
-    // Accept connection
-    addr_size = sizeof(client_addr);
-    if ((client_socket = accept(server_socket, (struct sockaddr*)&client_addr, &addr_size)) == -1) {
-        perror("Accept failed");
-        exit(EXIT_FAILURE);
+    // Accept connections from two players
+    for (int i = 0; i < 2; ++i) {
+        addr_size = sizeof(client_addr);
+        if ((client_sockets[i] = accept(server_socket, (struct sockaddr*)&client_addr, &addr_size)) == -1) {
+            perror("Accept failed");
+            exit(EXIT_FAILURE);
+        }
+        printf("Player %d connected from %s:%d\n", i + 1, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
     }
 
-    printf("Connection accepted from %s:%d\n", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-
-    // Initialize the game board and place ships
-    initialize_board(game_board);
-    place_ships(game_board);
-
     // Main game loop
-    	while (1) {
-        // Player's turn
-        print_board(game_board);
-        printf("Waiting for player's shot...\n");
-        
-        // Receive shot coordinates from the client
-        recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0);
+    int current_player = 0; // Start with player 1
+    while (1) {
+        // Inform players of whose turn it is
+        sprintf(buffer, "Player %d's turn. Enter your shot (e.g., A1): ", current_player + 1);
+        send(client_sockets[0], buffer, strlen(buffer), 0);
+        send(client_sockets[1], buffer, strlen(buffer), 0);
+
+        // Receive shot coordinates from the current player
+        recv(client_sockets[current_player], buffer, MAX_MESSAGE_SIZE, 0);
         int row = buffer[0] - '1';
         int col = buffer[1] - 'A';
 
         // Check if the shot hits a ship
-        if (is_hit(game_board, row, col)) {
-            printf("Hit at %c%d!\n", col + 'A', row + 1);
-            game_board[row][col] = 'X';
-            send(client_socket, "HIT", 3, 0);
+        if (is_hit(game_board[1 - current_player], row, col)) {
+            printf("Player %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
+            send(client_sockets[0], "HIT", 3, 0);
+            send(client_sockets[1], "HIT", 3, 0);
         } else {
-            printf("Miss at %c%d.\n", col + 'A', row + 1);
-            game_board[row][col] = 'O';
-            send(client_socket, "MISS", 4, 0);
+            printf("Player %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);
+            send(client_sockets[0], "MISS", 4, 0);
+            send(client_sockets[1], "MISS", 4, 0);
         }
 
         // Check for game over conditions
         int ships_remaining = CARRIER + BATTLESHIP + CRUISER + SUBMARINE + DESTROYER;
         for (int i = 0; i < BOARD_SIZE; ++i) {
             for (int j = 0; j < BOARD_SIZE; ++j) {
-                if (game_board[i][j] == 'X') {
+                if (game_board[current_player][i][j] == 'X') {
                     ships_remaining--;
                 }
             }
         }
 
         if (ships_remaining == 0) {
-            printf("All ships sunk! Game over.\n");
-            send(client_socket, "All ships sunk! Game over.", 26, 0);
+            printf("Player %d wins! All ships sunk! Game over.\n", current_player + 1);
+            send(client_sockets[0], "All ships sunk! Game over.", 26, 0);
+            send(client_sockets[1], "All ships sunk! Game over.", 26, 0);
             break;
         }
 
-        // Opponent's turn
-        print_board(game_board);
-        printf("Waiting for opponent's shot...\n");
-        
-        // Get user input for shot coordinates
-        printf("Enter your shot (e.g., A1): ");
-        fgets(buffer, MAX_MESSAGE_SIZE, stdin);
-
-        // Send shot coordinates to the client
-        send(client_socket, buffer, strlen(buffer), 0);
-
-        // Receive and display the server's response (HIT or MISS)
-        recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0);
-        printf("Server: %s\n", buffer);
-
-        // Check for game over conditions (server announces all ships sunk)
-        if (strcmp(buffer, "All ships sunk! Game over.") == 0) {
-            break;
-        }
+        // Switch to the other player
+        current_player = 1 - current_player;
     }
 
     // Close sockets
     closesocket(server_socket);
-    closesocket(client_socket);
+    closesocket(client_sockets[0]);
+    closesocket(client_sockets[1]);
+
+    WSACleanup();
 
     return 0;
 }

@@ -34,7 +34,7 @@ int main() {
     server_ip[strcspn(server_ip, "\n")] = '\0';  // Remove the newline character
 
     if (inet_pton(AF_INET, server_ip, &server_addr.sin_addr) <= 0) {
-        perror("Invalid address/ Address not supported");
+        perror("Invalid Address not supported");
         exit(EXIT_FAILURE);
     }
 
@@ -44,7 +44,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    printf("Connected to the server\n");
+    printf("\nConnected to the server. Waiting for other Player\n");
 
     // Main game loop for the client
     while (1) {
@@ -53,7 +53,7 @@ int main() {
         printf("%s", buffer);
 
         // Get user input for shot coordinates
-        printf("Enter your shot (e.g., A1): ");
+        printf("\nEnter your shot: \n");
         fgets(buffer, MAX_MESSAGE_SIZE, stdin);
 
         // Send shot coordinates to the server
@@ -61,10 +61,10 @@ int main() {
 
         // Receive and display the server's response (HIT or MISS)
         recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0);
-        printf("Server: %s\n", buffer);
+        printf("\nServer: %s\n", buffer);
 
         // Check for game over conditions (server announces all ships sunk)
-        if (strcmp(buffer, "All ships sunk! Game over.") == 0) {
+        if (strcmp(buffer, "\nAll ships sunk! Game over.\n") == 0) {
             break;
         }
     }

@@ -9,11 +9,11 @@
 #define MAX_MESSAGE_SIZE 1024
 
 // Define ship types and their sizes
-#define CARRIER 5
-#define BATTLESHIP 4
-#define CRUISER 3
-#define SUBMARINE 3
-#define DESTROYER 2
+#define CARRIER 1
+#define BATTLESHIP 1
+#define CRUISER 1
+#define SUBMARINE 1
+#define DESTROYER 1
 
 // Function to initialize the game board
 void initialize_board(char board[BOARD_SIZE][BOARD_SIZE]) {
@@ -26,7 +26,7 @@ void initialize_board(char board[BOARD_SIZE][BOARD_SIZE]) {
 
 // Function to print the game board
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]) {
-    printf("   A B C D E F G H\n");
+    printf("    A B C D E F G H\n");
     for (int i = 0; i < BOARD_SIZE; ++i) {
         printf("%d |", i + 1);
         for (int j = 0; j < BOARD_SIZE; ++j) {
@@ -45,27 +45,57 @@ void place_ships(char board[BOARD_SIZE][BOARD_SIZE]) {
 
     // Carrier (size: 5)
     for (int i = 0; i < CARRIER; ++i) {
-        board[0][i] = 'C';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Carrier?\n");
+        scanf("%s", input);
+        placey = input[1] - '1';
+        placex = input[0] - 'A';
+        board[placey][placex] = 'C';
     }
 
     // Battleship (size: 4)
     for (int i = 0; i < BATTLESHIP; ++i) {
-        board[1][i] = 'B';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Battle Ship?\n");
+        scanf("%s", input);
+        placey = input[1] - '1';
+        placex = input[0] - 'A';
+        board[placey][placex] = 'B';
     }
 
     // Cruiser (size: 3)
     for (int i = 0; i < CRUISER; ++i) {
-        board[2][i] = 'R';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Cruiser?\n");
+        scanf("%s", input);
+        placey = input[1] - '1';
+        placex = input[0] - 'A';
+        board[placey][placex] = 'R';
     }
 
     // Submarine (size: 3)
     for (int i = 0; i < SUBMARINE; ++i) {
-        board[3][i] = 'S';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Submarine?\n");
+        scanf("%s", input);
+        placey = input[1] - '1';
+        placex = input[0] - 'A';
+        board[placey][placex] = 'S';
     }
 
     // Destroyer (size: 2)
     for (int i = 0; i < DESTROYER; ++i) {
-        board[4][i] = 'D';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Destroyer?\n");
+        scanf("%s", input);
+        placey = input[1] - '1';
+        placex = input[0] - 'A';
+        board[placey][placex] = 'D';
     }
 }
 
@@ -88,11 +118,10 @@ int main() {
     char buffer[MAX_MESSAGE_SIZE] = {0};
     char game_board[2][BOARD_SIZE][BOARD_SIZE]; // Separate boards for each player
 
-    // Initialize the game boards and place ships for both players
+    // Initialize the game boards
     initialize_board(game_board[0]);
     initialize_board(game_board[1]);
-    place_ships(game_board[0]);
-    place_ships(game_board[1]);
+    
 
     // Create socket
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -132,8 +161,16 @@ int main() {
     // Main game loop
     int current_player = 0; // Start with player 1
     while (1) {
+        //print board
+        print_board(game_board[0]);
+        print_board(game_board[1]);
+        place_ships(game_board[0]);
+        place_ships(game_board[1]);
+        print_board(game_board[0]);
+        print_board(game_board[1]);
+
         // Inform players of whose turn it is
-        sprintf(buffer, "Player %d's turn. Enter your shot (e.g., A1): ", current_player + 1);
+        sprintf(buffer, "Player %d's turn.", current_player + 1);
         send(client_sockets[0], buffer, strlen(buffer), 0);
         send(client_sockets[1], buffer, strlen(buffer), 0);
 

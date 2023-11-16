@@ -158,10 +158,7 @@ int main() {
         printf("Player %d connected from %s:%d\n", i + 1, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
     }
 
-    // Main game loop
-    int current_player = 0; // Start with player 1
-    while (1) {
-        //print board
+    //print board
         print_board(game_board[0]);
         print_board(game_board[1]);
         place_ships(game_board[0]);
@@ -169,6 +166,9 @@ int main() {
         print_board(game_board[0]);
         print_board(game_board[1]);
 
+    // Main game loop
+    int current_player = 0; // Start with player 1
+    while (1) {
         // Inform players of whose turn it is
         sprintf(buffer, "Player %d's turn.", current_player + 1);
         send(client_sockets[0], buffer, strlen(buffer), 0);

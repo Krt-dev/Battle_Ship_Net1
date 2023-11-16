@@ -31,7 +31,7 @@ int main() {
     char server_ip[15];
     printf("Enter the server's IP address: ");
     fgets(server_ip, sizeof(server_ip), stdin);
-    server_ip[strcspn(server_ip, "\n")] = '\0';  // Remove the newline character
+    server_ip[strcspn(server_ip, "\n")] = '\0';  
 
     if (inet_pton(AF_INET, server_ip, &server_addr.sin_addr) <= 0) {
         perror("Invalid Address not supported");

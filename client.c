@@ -50,7 +50,7 @@ int main() {
     while (1) {
         // Receive information about whose turn it is
         recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0); //1st receive
-        printf("\nIt is: %s turn\n", buffer);
+        printf("\nYour Turn %s \n", buffer);
         
         // Get user input for shot coordinates
         printf("\nEnter your shot:\n");

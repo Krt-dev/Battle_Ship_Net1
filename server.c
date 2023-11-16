@@ -177,9 +177,10 @@ int main() {
 int current_player = 0; // Start with player 1
 while (1) {
     // Inform players of whose turn it is
-    sprintf(buffer, "Player %d", current_player + 1);
-    send(client_sockets[0], buffer, strlen(buffer), 0); //1st send to P1
-    send(client_sockets[1], buffer, strlen(buffer), 0); //1st send to P2
+    sprintf(buffer, "Player %d", current_player);
+    // send(client_sockets[0], buffer, strlen(buffer), 0); //1st send to P1
+    // send(client_sockets[1], buffer, strlen(buffer), 0); //1st send to P2
+    send(client_sockets[current_player], buffer, strlen(buffer), 0);
 
 
     // Receive shot coordinates from the current player
@@ -192,12 +193,12 @@ while (1) {
         printf("\nPlayer %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
         // send(client_sockets[0], "HIT", 3, 0);
         // send(client_sockets[1], "HIT", 3, 0);
-        send(client_sockets[current_player], "HIT", 3, 0);
+        send(client_sockets[current_player], "HIT", MAX_MESSAGE_SIZE, 0);
     } else {
         printf("\nPlayer %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);
         // send(client_sockets[0], "MISS", 4, 0);
         // send(client_sockets[1], "MISS", 4, 0);
-        send(client_sockets[current_player], "MISS", 4, 0);
+        send(client_sockets[current_player], "MISS", MAX_MESSAGE_SIZE, 0);
     }
 
     // Check for game over conditions

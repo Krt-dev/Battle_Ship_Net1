@@ -101,7 +101,7 @@ void place_ships(char board[BOARD_SIZE][BOARD_SIZE]) {
 
 // Function to check if a shot hits a ship
 int is_hit(char board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
-    return (board[row][col] != ' '); //!= 
+    return (board[row][col] == ' '); //!= 
 }
 
 int main() {
@@ -190,12 +190,12 @@ while (1) {
 
     // Check if the shot hits a ship
     if (is_hit(game_board[1 - current_player], row, col)) {
-        printf("\nPlayer %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
+        //printf("\nPlayer %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
         // send(client_sockets[0], "HIT", 3, 0);
         // send(client_sockets[1], "HIT", 3, 0);
         send(client_sockets[current_player], "HIT", MAX_MESSAGE_SIZE, 0);
     } else {
-        printf("\nPlayer %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);
+        //printf("\nPlayer %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);
         // send(client_sockets[0], "MISS", 4, 0);
         // send(client_sockets[1], "MISS", 4, 0);
         send(client_sockets[current_player], "MISS", MAX_MESSAGE_SIZE, 0);

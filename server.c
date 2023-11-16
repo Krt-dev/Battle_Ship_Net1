@@ -177,7 +177,7 @@ int main() {
 int current_player = 0; // Start with player 1
 while (1) {
     // Inform players of whose turn it is
-    sprintf(buffer, "Player %d", current_player);
+    sprintf(buffer, "Player %d", current_player + 1);
     // send(client_sockets[0], buffer, strlen(buffer), 0); //1st send to P1
     // send(client_sockets[1], buffer, strlen(buffer), 0); //1st send to P2
     send(client_sockets[current_player], buffer, strlen(buffer), 0);
@@ -202,21 +202,22 @@ while (1) {
     }
 
     // Check for game over conditions
-    int ships_remaining = CARRIER + BATTLESHIP + CRUISER + SUBMARINE + DESTROYER;
+    int ships_remaining = 0;
     for (int i = 0; i < BOARD_SIZE; ++i) {
-        for (int j = 0; j < BOARD_SIZE; ++j) {
-            if (game_board[current_player][i][j] == 'X') {
-                ships_remaining--;
-            }
+    for (int j = 0; j < BOARD_SIZE; ++j) {
+        if (game_board[current_player][i][j] != ' ') {
+            ships_remaining++;
         }
     }
+}
 
-    if (ships_remaining == 0) {
-        printf("\nPlayer %d wins! All ships sunk! Game over.\n", current_player + 1);
-        send(client_sockets[0], "All ships sunk! Game over.", 26, 0);
-        send(client_sockets[1], "All ships sunk! Game over.", 26, 0);
-        break;
-    }
+if (ships_remaining == 0) {
+    printf("Player %d wins! All ships sunk! Game over.\n", current_player + 1);
+    send(client_sockets[0], "All ships sunk! Game over.", 26, 0);
+    send(client_sockets[1], "All ships sunk! Game over.", 26, 0);
+    break;
+}
+
 
     // Switch to the other player
     current_player = 1 - current_player;

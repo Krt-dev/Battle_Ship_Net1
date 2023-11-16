@@ -50,10 +50,10 @@ int main() {
     while (1) {
         // Receive information about whose turn it is
         recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0); //1st receive
-        printf("\n%s\n", buffer);
+        printf("\nIt is: %s turn\n", buffer);
         
         // Get user input for shot coordinates
-        printf("\nEnter your shot player 1: \n");
+        printf("\nEnter your shot player 1:\n");
         fgets(buffer, MAX_MESSAGE_SIZE, stdin);
 
         // Send shot coordinates to the server
@@ -61,7 +61,7 @@ int main() {
 
         // Receive and display the server's response (HIT or MISS)
         recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0);
-        printf("\nServer: %s\n", buffer);
+        printf("\nYour shot to player 2 is a: %s\n", buffer);
 
         // Check for game over conditions (server announces all ships sunk)
         if (strcmp(buffer, "\nAll ships sunk! Game over.\n") == 0) {

@@ -50,10 +50,10 @@ int main() {
     while (1) {
         // Receive information about whose turn it is
         recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0);
-        printf("%s", buffer);
+        printf("\n%s\n", buffer);
 
         // Get user input for shot coordinates
-        printf("\nEnter your shot: \n");
+        printf("\nEnter your shot player 1: \n");
         fgets(buffer, MAX_MESSAGE_SIZE, stdin);
 
         // Send shot coordinates to the server

@@ -101,7 +101,7 @@ void place_ships(char board[BOARD_SIZE][BOARD_SIZE]) {
 
 // Function to check if a shot hits a ship
 int is_hit(char board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
-    return (board[row][col] == ' '); //!= 
+    return (board[row][col] != ' '); //!= 
 }
 
 int main() {
@@ -159,20 +159,27 @@ int main() {
     }
 
     //print board
+        printf("this is player 1's board");
         print_board(game_board[0]);
+        printf("this is player 2's board");
         print_board(game_board[1]);
+        printf("this is player 1's ship placement");
         place_ships(game_board[0]);
+        printf("this is player 2's ship placement");
         place_ships(game_board[1]);
+        printf("this is player 1's board with ships");
         print_board(game_board[0]);
+        printf("this is player 2's board with ships");
         print_board(game_board[1]);
 
     // Main game loop
 int current_player = 0; // Start with player 1
 while (1) {
     // Inform players of whose turn it is
-    sprintf(buffer, "Player %d's turn.", current_player + 1);
+    sprintf(buffer, "\nPlayer %d's turn.\n", current_player + 1);
     send(client_sockets[0], buffer, strlen(buffer), 0);
     send(client_sockets[1], buffer, strlen(buffer), 0);
+
 
     // Receive shot coordinates from the current player
     recv(client_sockets[current_player], buffer, MAX_MESSAGE_SIZE, 0);
@@ -181,11 +188,11 @@ while (1) {
 
     // Check if the shot hits a ship
     if (is_hit(game_board[1 - current_player], row, col)) {
-        printf("Player %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
+        printf("\nPlayer %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
         send(client_sockets[0], "HIT", 3, 0);
         send(client_sockets[1], "HIT", 3, 0);
     } else {
-        printf("Player %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);
+        printf("\nPlayer %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);
         send(client_sockets[0], "MISS", 4, 0);
         send(client_sockets[1], "MISS", 4, 0);
     }
@@ -201,7 +208,7 @@ while (1) {
     }
 
     if (ships_remaining == 0) {
-        printf("Player %d wins! All ships sunk! Game over.\n", current_player + 1);
+        printf("\nPlayer %d wins! All ships sunk! Game over.\n", current_player + 1);
         send(client_sockets[0], "All ships sunk! Game over.", 26, 0);
         send(client_sockets[1], "All ships sunk! Game over.", 26, 0);
         break;

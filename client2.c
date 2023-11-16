@@ -52,9 +52,6 @@ int main() {
         recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0);
         printf("\n%s\n", buffer);
 
-        recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0);
-        printf("\nServer: %s\n", buffer);
-
         // Get user input for shot coordinates
         printf("\nEnter your shot player 2: \n");
         fgets(buffer, MAX_MESSAGE_SIZE, stdin);

@@ -122,6 +122,19 @@ int main() {
     initialize_board(game_board[0]);
     initialize_board(game_board[1]);
     
+     //print board
+        printf("\nthis is player 1's board\n");
+        print_board(game_board[0]);
+        printf("\nthis is player 2's board\n");
+        print_board(game_board[1]);
+        printf("\nthis is player 1's ship placement\n");
+        place_ships(game_board[0]);
+        printf("\nthis is player 2's ship placement\n");
+        place_ships(game_board[1]);
+        printf("\nthis is player 1's board with ships\n");
+        print_board(game_board[0]);
+        printf("\nthis is player 2's board with ships\n");
+        print_board(game_board[1]);
 
     // Create socket
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -158,27 +171,15 @@ int main() {
         printf("Player %d connected from %s:%d\n", i + 1, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
     }
 
-    //print board
-        printf("this is player 1's board");
-        print_board(game_board[0]);
-        printf("this is player 2's board");
-        print_board(game_board[1]);
-        printf("this is player 1's ship placement");
-        place_ships(game_board[0]);
-        printf("this is player 2's ship placement");
-        place_ships(game_board[1]);
-        printf("this is player 1's board with ships");
-        print_board(game_board[0]);
-        printf("this is player 2's board with ships");
-        print_board(game_board[1]);
+   
 
     // Main game loop
 int current_player = 0; // Start with player 1
 while (1) {
     // Inform players of whose turn it is
     sprintf(buffer, "\nPlayer %d's turn.\n", current_player + 1);
-    send(client_sockets[0], buffer, strlen(buffer), 0);
-    send(client_sockets[1], buffer, strlen(buffer), 0);
+    send(client_sockets[0], buffer, strlen(buffer), 0); //1st send to P1
+    send(client_sockets[1], buffer, strlen(buffer), 0); //1st send to P2
 
 
     // Receive shot coordinates from the current player

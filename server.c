@@ -101,7 +101,7 @@ void place_ships(char board[BOARD_SIZE][BOARD_SIZE]) {
 
 // Function to check if a shot hits a ship
 int is_hit(char board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
-    return (board[row][col] == ' '); //!= 
+    return (board[row][col] != ' '); //!= 
 }
 
 int main() {

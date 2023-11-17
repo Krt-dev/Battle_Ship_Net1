@@ -64,7 +64,7 @@ int main() {
         printf("\nYour shot is a: %s\n", buffer);
 
         // Check for game over conditions (server announces all ships sunk)
-        if (strcmp(buffer, "\nAll ships sunk! Game over.\n") == 0) {
+        if (strcmp(buffer, "\nAll ships Sunk! Game over.\n") == 0) {
             break;
         }
     }

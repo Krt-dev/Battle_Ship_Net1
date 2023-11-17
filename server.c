@@ -192,7 +192,6 @@ while (1) {
         //printf("\nPlayer %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
         // send(client_sockets[0], "HIT", 3, 0);
         // send(client_sockets[1], "HIT", 3, 0);
-        game_board[1 - current_player][row][col] = ' ';
         send(client_sockets[current_player], "HIT", MAX_MESSAGE_SIZE, 0);
     } else {
         //printf("\nPlayer %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);

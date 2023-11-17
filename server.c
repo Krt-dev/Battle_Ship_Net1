@@ -189,7 +189,7 @@ while (1) {
     int col = buffer[1] - 'A';
 
     // Check if the shot hits a ship
-    if (is_hit(game_board[1 - current_player], row, col)) {
+    if (is_hit(game_board[current_player], row, col)) { //ARI GE EDIT FOR 2:50 UPDATE 1-CURRENTPLAYER
         //printf("\nPlayer %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
         // send(client_sockets[0], "HIT", 3, 0);
         // send(client_sockets[1], "HIT", 3, 0);

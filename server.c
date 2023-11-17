@@ -118,23 +118,6 @@ int main() {
     char buffer[MAX_MESSAGE_SIZE] = {0};
     char game_board[2][BOARD_SIZE][BOARD_SIZE]; // Separate boards for each player
 
-    // Initialize the game boards
-    initialize_board(game_board[0]);
-    initialize_board(game_board[1]);
-    
-     //print board
-        printf("\nthis is player 1's board\n");
-        print_board(game_board[0]);
-        printf("\nthis is player 2's board\n");
-        print_board(game_board[1]);
-        printf("\nthis is player 1's ship placement\n");
-        place_ships(game_board[0]);
-        printf("\nthis is player 2's ship placement\n");
-        place_ships(game_board[1]);
-        printf("\nthis is player 1's board with ships\n");
-        print_board(game_board[0]);
-        printf("\nthis is player 2's board with ships\n");
-        print_board(game_board[1]);
 
     // Create socket
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
@@ -171,7 +154,23 @@ int main() {
         printf("Player %d connected from %s:%d\n", i + 1, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
     }
 
-   
+   // Initialize the game boards
+    initialize_board(game_board[0]);
+    initialize_board(game_board[1]);
+    
+     //print board
+        printf("\nthis is player 1's board\n");
+        print_board(game_board[0]);
+        printf("\nthis is player 2's board\n");
+        print_board(game_board[1]);
+        printf("\nthis is player 1's ship placement\n");
+        place_ships(game_board[0]);
+        printf("\nthis is player 2's ship placement\n");
+        place_ships(game_board[1]);
+        printf("\nthis is player 1's board with ships\n");
+        print_board(game_board[0]);
+        printf("\nthis is player 2's board with ships\n");
+        print_board(game_board[1]);
 
     // Main game loop
 int current_player = 0; // Start with player 1
@@ -189,7 +188,7 @@ while (1) {
     int col = buffer[1] - 'A';
 
     // Check if the shot hits a ship
-    if (is_hit(game_board[current_player], row, col)) { //ARI GE EDIT FOR 2:50 UPDATE 1-CURRENTPLAYER
+    if (is_hit(game_board[1 -current_player], row, col)) { 
         //printf("\nPlayer %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
         // send(client_sockets[0], "HIT", 3, 0);
         // send(client_sockets[1], "HIT", 3, 0);
@@ -217,6 +216,8 @@ if (ships_remaining == 0) {
     send(client_sockets[1], "All ships sunk! Game over.", 26, 0);
     break;
 }
+
+print_board(game_board[current_player]);
 
 
     // Switch to the other player

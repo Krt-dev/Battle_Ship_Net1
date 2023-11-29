@@ -48,10 +48,13 @@ int main() {
 
     // Main game loop for the client
     while (1) {
+
         // Receive information about whose turn it is
         recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0); //1st receive
         printf("\nYour Turn %s \n", buffer);
-        
+
+        ZeroMemory(&buffer, sizeof(buffer));
+
         // Get user input for shot coordinates
         printf("\nEnter your shot:\n");
         fgets(buffer, MAX_MESSAGE_SIZE, stdin);

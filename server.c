@@ -8,14 +8,14 @@
 #define BOARD_SIZE 8
 #define MAX_MESSAGE_SIZE 1024
 
-// Define ship types and their sizes
-#define CARRIER 5
-#define BATTLESHIP 4
-#define CRUISER 3
-#define SUBMARINE 3
-#define DESTROYER 2
 
-// Function to initialize the game board
+#define CARRIER 1
+#define BATTLESHIP 1
+#define CRUISER 1
+#define SUBMARINE 1
+#define DESTROYER 1
+
+
 void initialize_board(char board[BOARD_SIZE][BOARD_SIZE]) {
     for (int i = 0; i < BOARD_SIZE; ++i) {
         for (int j = 0; j < BOARD_SIZE; ++j) {
@@ -24,9 +24,9 @@ void initialize_board(char board[BOARD_SIZE][BOARD_SIZE]) {
     }
 }
 
-// Function to print the game board
+
 void print_board(char board[BOARD_SIZE][BOARD_SIZE]) {
-    printf("   A B C D E F G H\n");
+    printf("    A B C D E F G H\n");
     for (int i = 0; i < BOARD_SIZE; ++i) {
         printf("%d |", i + 1);
         for (int j = 0; j < BOARD_SIZE; ++j) {
@@ -37,42 +37,84 @@ void print_board(char board[BOARD_SIZE][BOARD_SIZE]) {
     printf("\n");
 }
 
-// Function to place ships on the board
+
 void place_ships(char board[BOARD_SIZE][BOARD_SIZE]) {
-    // For simplicity, ships are placed randomly in this example
-    // In a real game, you might implement a more strategic placement
-    // or let players place their own ships.
 
-    // Carrier (size: 5)
+   
     for (int i = 0; i < CARRIER; ++i) {
-        board[0][i] = 'C';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Carrier?\n");
+        fflush(stdin);
+        scanf("%s", input);
+        placex = input[0] - 'A';
+        placey = input[1] - '1';
+        board[placey][placex] = 'S';
     }
 
-    // Battleship (size: 4)
+    
     for (int i = 0; i < BATTLESHIP; ++i) {
-        board[1][i] = 'B';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Battle Ship?\n");
+        fflush(stdin);
+        scanf("%s", input);
+        placex = input[0] - 'A';
+        placey = input[1] - '1';
+        board[placey][placex] = 'S';
     }
 
-    // Cruiser (size: 3)
     for (int i = 0; i < CRUISER; ++i) {
-        board[2][i] = 'R';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Cruiser?\n");
+        fflush(stdin);
+        scanf("%s", input);
+        placex = input[0] - 'A';
+        placey = input[1] - '1';
+        board[placey][placex] = 'S';
     }
 
-    // Submarine (size: 3)
+    
     for (int i = 0; i < SUBMARINE; ++i) {
-        board[3][i] = 'S';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Submarine?\n");
+        fflush(stdin);
+        scanf("%s", input);
+        placex = input[0] - 'A';
+        placey = input[1] - '1';
+        board[placey][placex] = 'S';
     }
 
-    // Destroyer (size: 2)
+   
     for (int i = 0; i < DESTROYER; ++i) {
-        board[4][i] = 'D';
+        char input[3];
+        int placex = 0, placey = 0;
+        printf("\nWhere do you want to place the Destroyer?\n");
+        fflush(stdin);
+        scanf("%s", input);
+        placex = input[0] - 'A';
+        placey = input[1] - '1';
+        board[placey][placex] = 'S';
     }
 }
 
-// Function to check if a shot hits a ship
+
+// int is_hit(char board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
+//     return (board[row][col] != ' ');  
+// }
+
+//ang epass index sa player, 3d array
 int is_hit(char board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
-    return (board[row][col] != ' ');
+    if (board[row][col] == 'S'){
+        board[row][col] = ' ';
+        //printf("\n\n\n\n");
+        return 1;
+    }
+    return 0;
 }
+
 
 int main() {
     WSADATA wsaData;
@@ -86,32 +128,45 @@ int main() {
     struct sockaddr_in server_addr, client_addr;
     int addr_size;
     char buffer[MAX_MESSAGE_SIZE] = {0};
-    char game_board[2][BOARD_SIZE][BOARD_SIZE]; // Separate boards for each player
+    char game_board[2][BOARD_SIZE][BOARD_SIZE]; 
 
-    // Initialize the game boards and place ships for both players
+
+    
     initialize_board(game_board[0]);
     initialize_board(game_board[1]);
-    place_ships(game_board[0]);
-    place_ships(game_board[1]);
+    
+    
+        printf("\nthis is player 1's board\n");
+        print_board(game_board[0]);
+        printf("\nthis is player 2's board\n");
+        print_board(game_board[1]);
+        printf("\nthis is player 1's ship placement\n");
+        place_ships(game_board[0]);
+        printf("\nthis is player 2's ship placement\n");
+        place_ships(game_board[1]);
+        printf("\nthis is player 1's board with ships\n");
+        print_board(game_board[0]);
+        printf("\nthis is player 2's board with ships\n");
+        print_board(game_board[1]);
 
-    // Create socket
+    
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("Socket creation failed");
         exit(EXIT_FAILURE);
     }
 
-    // Setup server address structure
+    
     server_addr.sin_family = AF_INET;
     server_addr.sin_addr.s_addr = INADDR_ANY;
     server_addr.sin_port = htons(PORT);
 
-    // Bind the socket
+    
     if (bind(server_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
         perror("Bind failed");
         exit(EXIT_FAILURE);
     }
 
-    // Listen for incoming connections (two players)
+    
     if (listen(server_socket, 2) == -1) {
         perror("Listen failed");
         exit(EXIT_FAILURE);
@@ -119,7 +174,7 @@ int main() {
 
     printf("Waiting for players to connect...\n");
 
-    // Accept connections from two players
+    
     for (int i = 0; i < 2; ++i) {
         addr_size = sizeof(client_addr);
         if ((client_sockets[i] = accept(server_socket, (struct sockaddr*)&client_addr, &addr_size)) == -1) {
@@ -129,52 +184,65 @@ int main() {
         printf("Player %d connected from %s:%d\n", i + 1, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
     }
 
-    // Main game loop
-    int current_player = 0; // Start with player 1
-    while (1) {
-        // Inform players of whose turn it is
-        sprintf(buffer, "Player %d's turn. Enter your shot (e.g., A1): ", current_player + 1);
-        send(client_sockets[0], buffer, strlen(buffer), 0);
-        send(client_sockets[1], buffer, strlen(buffer), 0);
+   
 
-        // Receive shot coordinates from the current player
-        recv(client_sockets[current_player], buffer, MAX_MESSAGE_SIZE, 0);
-        int row = buffer[0] - '1';
-        int col = buffer[1] - 'A';
+    
+int current_player = 0; 
+while (1) {
+    
+    sprintf(buffer, "Player %d", current_player + 1);
+    // send(client_sockets[0], buffer, strlen(buffer), 0); //1st send to P1
+    // send(client_sockets[1], buffer, strlen(buffer), 0); //1st send to P2
+    send(client_sockets[current_player], buffer, strlen(buffer), 0);
 
-        // Check if the shot hits a ship
-        if (is_hit(game_board[1 - current_player], row, col)) {
-            printf("Player %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
-            send(client_sockets[0], "HIT", 3, 0);
-            send(client_sockets[1], "HIT", 3, 0);
-        } else {
-            printf("Player %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);
-            send(client_sockets[0], "MISS", 4, 0);
-            send(client_sockets[1], "MISS", 4, 0);
-        }
+    ZeroMemory(&buffer, sizeof(buffer));
 
-        // Check for game over conditions
-        int ships_remaining = CARRIER + BATTLESHIP + CRUISER + SUBMARINE + DESTROYER;
-        for (int i = 0; i < BOARD_SIZE; ++i) {
-            for (int j = 0; j < BOARD_SIZE; ++j) {
-                if (game_board[current_player][i][j] == 'X') {
-                    ships_remaining--;
-                }
-            }
-        }
+    
+    recv(client_sockets[current_player], buffer, MAX_MESSAGE_SIZE, 0);
+    int col = buffer[0] - 'A';
+    int row = buffer[1] - '1';
 
-        if (ships_remaining == 0) {
-            printf("Player %d wins! All ships sunk! Game over.\n", current_player + 1);
-            send(client_sockets[0], "All ships sunk! Game over.", 26, 0);
-            send(client_sockets[1], "All ships sunk! Game over.", 26, 0);
-            break;
-        }
-
-        // Switch to the other player
-        current_player = 1 - current_player;
+    
+    if (is_hit(game_board[1 - current_player], row, col)) { 
+        //printf("\nPlayer %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
+        // send(client_sockets[0], "HIT", 3, 0);
+        // send(client_sockets[1], "HIT", 3, 0);
+        send(client_sockets[current_player], "HIT", MAX_MESSAGE_SIZE, 0);
+    } else {
+        //printf("\nPlayer %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);
+        // send(client_sockets[0], "MISS", 4, 0);
+        // send(client_sockets[1], "MISS", 4, 0);
+        send(client_sockets[current_player], "MISS", MAX_MESSAGE_SIZE, 0);
     }
 
-    // Close sockets
+    
+    int ships_remaining = 0;
+    for (int i = 0; i < BOARD_SIZE; ++i) {
+    for (int j = 0; j < BOARD_SIZE; ++j) {
+        if (game_board[1 - current_player][i][j] != ' ') {
+            ships_remaining++;
+        }
+    }
+}
+
+if (ships_remaining == 0) {
+    printf("Player %d wins! All ships sunk! Game over.\n", current_player + 1);
+    send(client_sockets[0], "\nAll ships Sunk! Game over.\n", 32, 0);
+    send(client_sockets[1], "\nAll ships Sunk! Game over.\n", 32, 0);
+    break;
+}
+
+
+
+
+    
+    //current_player = 1 - current_player;
+
+    (current_player==0)?(current_player=1):(current_player=0);
+}
+
+
+
     closesocket(server_socket);
     closesocket(client_sockets[0]);
     closesocket(client_sockets[1]);

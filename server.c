@@ -130,12 +130,22 @@ int main() {
     char game_board[2][BOARD_SIZE][BOARD_SIZE]; 
 
 
+        initialize_board(game_board[0]);
+        initialize_board(game_board[1]);
+        
+        printf("\nThis is player 1's board\n");
+        print_board(game_board[0]);
+        printf("\nThis is player 2's board\n");
+        print_board(game_board[1]);
+        printf("\nThis is player 1's ship placement\n");
+        place_ships(game_board[0]);
+        printf("\nThis is player 2's ship placement\n");
+        place_ships(game_board[1]);
+        printf("\nThis is player 1's board with ships\n");
+        print_board(game_board[0]);
+        printf("\nThis is player 2's board with ships\n");
+        print_board(game_board[1]);
     
-    initialize_board(game_board[0]);
-    initialize_board(game_board[1]);
-    
-    
-
     
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("Socket creation failed");
@@ -171,18 +181,7 @@ int main() {
         printf("Player %d connected from %s:%d\n", i + 1, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
     }
 
-   printf("\nthis is player 1's board\n");
-        print_board(game_board[0]);
-        printf("\nthis is player 2's board\n");
-        print_board(game_board[1]);
-        printf("\nthis is player 1's ship placement\n");
-        place_ships(game_board[0]);
-        printf("\nthis is player 2's ship placement\n");
-        place_ships(game_board[1]);
-        printf("\nthis is player 1's board with ships\n");
-        print_board(game_board[0]);
-        printf("\nthis is player 2's board with ships\n");
-        print_board(game_board[1]);
+        
 
     
 int current_player = 0; 

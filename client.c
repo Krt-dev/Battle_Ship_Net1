@@ -20,17 +20,17 @@ int main() {
     struct sockaddr_in server_addr;
     char buffer[MAX_MESSAGE_SIZE] = {0};
 
-    // Create socket
+    
     if ((client_socket = socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
         perror("Socket creation failed");
         WSACleanup();
         return EXIT_FAILURE;
     }
 
-    // Setup server address structure
+    
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(PORT);
-    // Input the server's IP address
+    
     char server_ip[15];
     printf("---------WELCOME TO BATTLESHIP---------\n");
     printf("Enter the server's IP address: ");
@@ -42,7 +42,7 @@ int main() {
         exit(EXIT_FAILURE);
     }
 
-    // Connect to the server
+    
     if (connect(client_socket, (struct sockaddr*)&server_addr, sizeof(server_addr)) == -1) {
         perror("Connection failed");
         exit(EXIT_FAILURE);
@@ -61,33 +61,33 @@ int main() {
     }
     printf("\n");
 
-    // Main game loop for the client
+    
     while (1) {
 
-        // Receive information about whose turn it is
-        recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0); //1st receive
-        printf("\nYour Turn %s \n", buffer);
+        
+        recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0); 
+        printf("\n----Your Turn %s ----\n", buffer);
 
         ZeroMemory(&buffer, sizeof(buffer));
 
-        // Get user input for shot coordinates
-        printf("\nEnter your shot:\n");
+        
+        printf("\n-Enter your shot:\n");
         fgets(buffer, MAX_MESSAGE_SIZE, stdin);
 
-        // Send shot coordinates to the server
+        
         send(client_socket, buffer, strlen(buffer), 0);
 
-        // Receive and display the server's response (HIT or MISS)
+      
         recv(client_socket, buffer, MAX_MESSAGE_SIZE, 0);
-        printf("\nYour shot is a: %s\n", buffer);
+        printf("\n===Your shot is a: %s ===\n", buffer);
 
-        // Check for game over conditions (server announces all ships sunk)
+       
         if (strcmp(buffer, "\nAll ships Sunk! Game over.\n") == 0) {
             break;
         }
     }
 
-    // Close the client socket
+    
     closesocket(client_socket);
 
     WSACleanup();

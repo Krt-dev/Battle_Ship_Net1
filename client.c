@@ -6,7 +6,10 @@
 #define PORT 8080
 #define MAX_MESSAGE_SIZE 1024
 
+
+
 int main() {
+    char iboard[8][8];
     WSADATA wsaData;
     if (WSAStartup(MAKEWORD(2, 2), &wsaData) != 0) {
         perror("Failed to initialize Winsock");
@@ -29,6 +32,7 @@ int main() {
     server_addr.sin_port = htons(PORT);
     // Input the server's IP address
     char server_ip[15];
+    printf("---------WELCOME TO BATTLESHIP---------\n");
     printf("Enter the server's IP address: ");
     fgets(server_ip, sizeof(server_ip), stdin);
     server_ip[strcspn(server_ip, "\n")] = '\0';  
@@ -45,6 +49,17 @@ int main() {
     }
 
     printf("\nConnected to the server. Waiting for other Player\n");
+
+    printf("BATTLEFIELD\n");
+    printf("    A B C D E F G H\n");
+    for (int i = 0; i < 8; ++i) {
+        printf("%d |", i + 1);
+        for (int j = 0; j < 8; ++j) {
+            printf("  ", iboard[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
 
     // Main game loop for the client
     while (1) {

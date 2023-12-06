@@ -97,6 +97,7 @@ void place_ships(char board[BOARD_SIZE][BOARD_SIZE]) {
         placex = input[0] - 'A';
         placey = input[1] - '1';
         board[placey][placex] = 'S';
+        printf("\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n");
     }
 }
 
@@ -105,11 +106,9 @@ void place_ships(char board[BOARD_SIZE][BOARD_SIZE]) {
 //     return (board[row][col] != ' ');  
 // }
 
-//ang epass index sa player, 3d array
 int is_hit(char board[BOARD_SIZE][BOARD_SIZE], int row, int col) {
     if (board[row][col] == 'S'){
         board[row][col] = ' ';
-        //printf("\n\n\n\n");
         return 1;
     }
     return 0;
@@ -131,24 +130,22 @@ int main() {
     char game_board[2][BOARD_SIZE][BOARD_SIZE]; 
 
 
-    
-    initialize_board(game_board[0]);
-    initialize_board(game_board[1]);
-    
-    
-        printf("\nthis is player 1's board\n");
+        initialize_board(game_board[0]);
+        initialize_board(game_board[1]);
+        
+        printf("\nThis is player 1's board\n");
         print_board(game_board[0]);
-        printf("\nthis is player 2's board\n");
+        printf("\nThis is player 2's board\n");
         print_board(game_board[1]);
-        printf("\nthis is player 1's ship placement\n");
+        printf("\nThis is player 1's ship placement\n");
         place_ships(game_board[0]);
-        printf("\nthis is player 2's ship placement\n");
+        printf("\nThis is player 2's ship placement\n");
         place_ships(game_board[1]);
-        printf("\nthis is player 1's board with ships\n");
+        printf("\nThis is player 1's board with ships\n");
         print_board(game_board[0]);
-        printf("\nthis is player 2's board with ships\n");
+        printf("\nThis is player 2's board with ships\n");
         print_board(game_board[1]);
-
+    
     
     if ((server_socket = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("Socket creation failed");
@@ -184,15 +181,13 @@ int main() {
         printf("Player %d connected from %s:%d\n", i + 1, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
     }
 
-   
+        
 
     
 int current_player = 0; 
 while (1) {
     
     sprintf(buffer, "Player %d", current_player + 1);
-    // send(client_sockets[0], buffer, strlen(buffer), 0); //1st send to P1
-    // send(client_sockets[1], buffer, strlen(buffer), 0); //1st send to P2
     send(client_sockets[current_player], buffer, strlen(buffer), 0);
 
     ZeroMemory(&buffer, sizeof(buffer));
@@ -204,14 +199,8 @@ while (1) {
 
     
     if (is_hit(game_board[1 - current_player], row, col)) { 
-        //printf("\nPlayer %d: Hit at %c%d!\n", current_player + 1, col + 'A', row + 1);
-        // send(client_sockets[0], "HIT", 3, 0);
-        // send(client_sockets[1], "HIT", 3, 0);
         send(client_sockets[current_player], "HIT", MAX_MESSAGE_SIZE, 0);
     } else {
-        //printf("\nPlayer %d: Miss at %c%d.\n", current_player + 1, col + 'A', row + 1);
-        // send(client_sockets[0], "MISS", 4, 0);
-        // send(client_sockets[1], "MISS", 4, 0);
         send(client_sockets[current_player], "MISS", MAX_MESSAGE_SIZE, 0);
     }
 
@@ -232,21 +221,19 @@ if (ships_remaining == 0) {
     break;
 }
 
-
-
-
-    
-    //current_player = 1 - current_player;
+   
 
     (current_player==0)?(current_player=1):(current_player=0);
 }
+    char quit;
+    printf("Close server? Y/N\n");
+    scanf(" %c", &quit);
 
-
-
+    if(quit == 'Y'){
     closesocket(server_socket);
     closesocket(client_sockets[0]);
     closesocket(client_sockets[1]);
-
+    }
     WSACleanup();
 
     return 0;
